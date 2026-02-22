@@ -21,37 +21,31 @@ const AllProduct = () => {
     console.log(products);
 
     //delete product
-    const handleDelete = async (id) => {
+    const handleDelete = async (e, id) => {
+        e.stopPropagation()
+
         try {
             let response = await axios.delete(`http://localhost:3000/api/v1/product/deleteproduct/${id}`);
-
             if (response.data.success) {
-                // 2. Update UI state: Filter out the deleted product so it vanishes instantly
                 const updatedProducts = products.filter(item => item._id !== id);
                 setproducts(updatedProducts);
-                messageApi.open({
-                    type: 'success',
-                    content: 'Product deleted successfully',
-                });
+                messageApi.open({ type: 'success', content: 'Product deleted successfully' });
             }
         } catch (error) {
             console.error("Delete Error:", error.response?.data || error.message);
-            messageApi.open({
-                type: 'error',
-                content: 'Failed to delete product',
-            });
+            messageApi.open({ type: 'error', content: 'Failed to delete product' });
         }
     }
 
     //go by slug to details page
-    const handleDetails = (slug) => {
-        navigate(`/home/product/${slug}`);
+    const handleDetails = (item) => {
+        navigate(`/home/product/${item.slug}`);
     };
 
     return (
         <section className="bg-white p-4 min-h-screen">
+            {contextHolder}
             <div className="mx-auto lg:max-w-7xl md:max-w-4xl sm:max-w-xl max-sm:max-w-sm">
-                {contextHolder}
                 <h2 className="text-2xl sm:text-3xl font-semibold text-slate-900 mb-6 sm:mb-8">
                     All Products
                 </h2>
@@ -63,7 +57,7 @@ const AllProduct = () => {
                 ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                         {products.map((item) => (
-                            <div key={item._id} onClick={() => handleDetails(item.slug)} className="bg-white shadow-sm border border-gray-200 rounded-lg p-3 flex flex-col">
+                            <div key={item._id} onClick={() => handleDetails(item)} className="bg-white shadow-sm border border-gray-200 rounded-lg p-3 flex flex-col">
                                 <div className="block cursor-pointer">
                                     <div className="aspect-[12/11] bg-gray-100 rounded-lg overflow-hidden">
                                         <img
@@ -90,14 +84,14 @@ const AllProduct = () => {
                                 {/* Buttons pushed to bottom */}
                                 <div className="flex items-center gap-2 mt-auto pt-6">
                                     <div
-                                        onClick={() => handleDelete(item._id)}
+                                        onClick={(e) => handleDelete(e, item._id)}
                                         className="bg-pink-50 hover:bg-pink-100 text-pink-500 w-12 h-9 flex items-center justify-center rounded-lg cursor-pointer transition-colors"
                                         title="Delete Product"
                                     >
                                         <RiDeleteBin6Fill />
                                     </div>
                                     <button
-                                        onClick={() => handleDetails(item.slug)}
+                                        onClick={() => handleDetails(item)}
                                         type="button"
                                         className="text-sm px-4 py-2 font-medium cursor-pointer w-full bg-indigo-600 hover:bg-indigo-700 text-white transition-all rounded-lg"
                                     >

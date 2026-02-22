@@ -1,117 +1,102 @@
-import React from 'react'
-import { useLocation } from 'react-router';
+import React, { useEffect, useState } from 'react'
+import axios from 'axios'
+import { useSelector } from 'react-redux'
+import { message } from 'antd'
 
 const CartPage = () => {
 
-    const location = useLocation();
+    const [cartItems, setCartItems] = useState([])
+    let [messageApi, contextHolder] = message.useMessage()
 
-    // Access the data sent from AllProduct
-    const product = location.state;
-    console.log(product);
+    // user data from Redux
+    let userData = useSelector((state) => state.userInfo.value)
 
+    // fetch cart items
+    useEffect(() => {
+        async function fetchCart() {
+            try {
+                const response = await axios.get('http://localhost:3000/api/v1/cart/allcart', {
+                    params: { user: userData.data._id }
+                })
+                setCartItems(response.data.data)
+            } catch (error) {
+                if (error.response?.status !== 404) {
+                    console.error("Failed to fetch cart:", error)
+                }
+                setCartItems([])
+            }
+        }
+        fetchCart()
+    }, [userData])
+
+    // handle delete
+    const handleDelete = async (cartId) => {
+        try {
+            await axios.delete(`http://localhost:3000/api/v1/cart/deletecart/${cartId}`)
+            messageApi.open({ type: 'success', content: 'Item removed from cart.' })
+            setCartItems((prev) => prev.filter((item) => item._id !== cartId))
+        } catch (error) {
+            messageApi.open({ type: 'error', content: error.response?.data?.message || 'Failed to remove item.' })
+        }
+    }
+
+    let totalAmount = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0)
 
     return (
         <section>
-            <div>
-                <div className="grid lg:grid-cols-3">
-                    <div className="lg:col-span-2 p-6 bg-white overflow-x-auto">
-                        <div className="flex gap-2 border-b border-gray-300 pb-4">
-                            <h2 className="text-xl font-semibold text-slate-900">
-                                Shopping Cart
-                            </h2>
-                        </div>
-                        <table className="mt-6 w-full border-collapse">
-                            <thead className="whitespace-nowrap text-left">
-                                <tr>
-                                    <th className="text-base text-slate-500 p-4 font-medium">
-                                        Description
-                                    </th>
-                                    <th className="text-base text-slate-500 p-4 font-medium">
-                                        Quantity
-                                    </th>
-                                    <th className="text-base text-slate-500 p-4 font-medium">Price</th>
-                                </tr>
-                            </thead>
-                            <tbody className="whitespace-nowrap divide-y divide-gray-300">
-                                <tr>
-                                    <td className="p-4">
-                                        <div className="flex items-center gap-4 w-max">
-                                            <div className="w-24 h-24 shrink-0">
-                                                <img
-                                                    src={product.image}
-                                                    className="w-full h-full object-contain"
-                                                />
-                                            </div>
-                                            <div>
-                                                <h4 className="text-base font-medium text-slate-900">
-                                                    {product.name}
-                                                </h4>
-                                                <button
-                                                    type="button"
-                                                    className="mt-3 font-medium text-red-500 text-sm cursor-pointer"
-                                                >
-                                                    Delete
-                                                </button>
-                                            </div>
+            {contextHolder}
+            <div className="p-4">
+                <div className="xl:max-w-screen-xl lg:max-w-screen-lg max-w-xl mx-auto">
+                    <h2 className="text-2xl font-bold text-slate-900 mb-6">Your Cart</h2>
+
+                    {cartItems.length === 0 ? (
+                        <div className="text-center text-gray-500 mt-12">Your cart is empty.</div>
+                    ) : (
+                        <>
+                            <div className="flex flex-col gap-4">
+                                {cartItems.map((item) => (
+                                    <div key={item._id} className="flex items-center gap-4 border border-gray-200 p-4">
+
+                                        {/* Product Image — comes from populate */}
+                                        <img
+                                            src={item.product?.image?.[0]}
+                                            alt={item.product?.title}
+                                            className="w-20 h-20 object-contain object-top shrink-0"
+                                        />
+
+                                        {/* Product Info — comes from populate */}
+                                        <div className="flex-1">
+                                            <h3 className="text-sm font-semibold text-slate-900">{item.product?.title}</h3>
+                                            <p className="text-sm text-gray-500 mt-1">Qty: {item.quantity}</p>
+                                            <p className="text-sm font-bold text-slate-900 mt-1">${item.price}</p>
                                         </div>
-                                    </td>
-                                    <td className="p-4">
-                                        <div className="flex gap-2 items-center border border-gray-300 bg-white px-3 py-2 w-max rounded-full">
-                                            <button
-                                                type="button"
-                                                className="border-0 outline-0 cursor-pointer"
-                                            >
-                                                -
-                                            </button>
-                                            <span className="text-slate-900 text-sm font-semibold px-3">
-                                                1
-                                            </span>
-                                            <button
-                                                type="button"
-                                                className="border-0 outline-0 cursor-pointer"
-                                            >
-                                                +
-                                            </button>
-                                        </div>
-                                    </td>
-                                    <td className="p-4">
-                                        <h4 className="text-base font-semibold text-slate-900">${product.price}</h4>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div className="bg-gray-50 p-6 lg:sticky lg:top-0 lg:h-screen">
-                        <h2 className="text-xl font-semibold text-slate-900 border-b border-gray-300 pb-4">
-                            Order Summary
-                        </h2>
-                        <ul className="text-slate-500 font-medium divide-y divide-gray-300 mt-6">
-                            <li className="flex flex-wrap gap-4 text-base py-3">
-                                Subtotal{" "}
-                                <span className="ml-auto font-semibold text-slate-900">$88.00</span>
-                            </li>
-                            <li className="flex flex-wrap gap-4 text-base py-3">
-                                Shipping{" "}
-                                <span className="ml-auto font-semibold text-slate-900">$4.00</span>
-                            </li>
-                            <li className="flex flex-wrap gap-4 text-base py-3">
-                                Tax{" "}
-                                <span className="ml-auto font-semibold text-slate-900">$4.00</span>
-                            </li>
-                            <li className="flex flex-wrap gap-4 text-base py-3 font-semibold text-slate-900">
-                                Total <span className="ml-auto">$96.00</span>
-                            </li>
-                        </ul>
-                        <button
-                            type="button"
-                            className="mt-6 text-base font-medium px-4 py-2 tracking-wide w-full rounded-full bg-blue-600 hover:bg-blue-700 text-white cursor-pointer"
-                        >
-                            Proceed to Checkout
-                        </button>
-                    </div>
+
+                                        {/* Remove Button */}
+                                        <button
+                                            type="button"
+                                            onClick={() => handleDelete(item._id)}
+                                            className="text-sm text-red-500 hover:text-red-700 font-medium cursor-pointer"
+                                        >
+                                            Remove
+                                        </button>
+
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* Order Summary */}
+                            <div className="mt-8 border-t border-gray-300 pt-4 flex justify-between items-center">
+                                <p className="text-lg font-semibold text-slate-900">Total</p>
+                                <p className="text-xl font-bold text-slate-900">${totalAmount.toFixed(2)}</p>
+                            </div>
+
+                            <button type="button" className="mt-6 w-full py-3 border border-purple-600 bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold">
+                                Proceed to Checkout
+                            </button>
+                        </>
+                    )}
                 </div>
             </div>
-
         </section>
     )
 }

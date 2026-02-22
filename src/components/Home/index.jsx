@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react';
 import { Outlet, useNavigate } from 'react-router';
 import { Menu } from 'antd';
-import { UsergroupAddOutlined, ProductOutlined, LoadingOutlined, HeartOutlined } from '@ant-design/icons';
+import { ProductOutlined, HeartOutlined } from '@ant-design/icons';
 import { useSelector } from 'react-redux';
+import { SiHomepage } from 'react-icons/si';
 
 const HomePage = () => {
     let navigate = useNavigate()
@@ -20,11 +21,10 @@ const HomePage = () => {
     const items = [
         {
             key: 'sub1',
-            label: 'Frequently Asked Questions',
-            icon: <UsergroupAddOutlined />,
+            label: 'Landing Page',
+            icon: <SiHomepage />,
             children: [
-                { key: '/home/question', label: 'All Questions' },
-                { key: '/home/users', label: 'User' },
+                { key: '/home', label: 'Home Page' },
             ],
         },
         {
@@ -47,12 +47,12 @@ const HomePage = () => {
             label: 'Cart',
             icon: <HeartOutlined />,
             children: [
-                { key: '/home/cartpage', label: 'Cart Page' },
+                { key: '/home/cartpage', label: 'View Cart' },
             ],
         },
         {
             type: 'divider',
-        },
+        }
     ];
 
     const onClick = e => {
