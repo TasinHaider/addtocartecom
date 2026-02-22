@@ -40,6 +40,15 @@ const CartPage = () => {
         }
     }
 
+    //handle quantity change
+    const handleQuantityChange = async (cartId, newQuantity) => {
+        if (newQuantity < 1) return
+        setCartItems((prev) =>
+            prev.map((item) => item._id === cartId ? { ...item, quantity: newQuantity } : item)
+        )
+        messageApi.open({ type: 'success', content: 'Quantity updated.' })
+    }
+
     let totalAmount = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0)
 
     return (
@@ -57,18 +66,35 @@ const CartPage = () => {
                                 {cartItems.map((item) => (
                                     <div key={item._id} className="flex items-center gap-4 border border-gray-200 p-4">
 
-                                        {/* Product Image — comes from populate */}
                                         <img
                                             src={item.product?.image?.[0]}
                                             alt={item.product?.title}
                                             className="w-20 h-20 object-contain object-top shrink-0"
                                         />
 
-                                        {/* Product Info — comes from populate */}
                                         <div className="flex-1">
                                             <h3 className="text-sm font-semibold text-slate-900">{item.product?.title}</h3>
-                                            <p className="text-sm text-gray-500 mt-1">Qty: {item.quantity}</p>
-                                            <p className="text-sm font-bold text-slate-900 mt-1">${item.price}</p>
+
+                                            <div className="flex items-center gap-2 mt-1">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleQuantityChange(item._id, item.quantity - 1)}
+                                                    disabled={item.quantity <= 1}
+                                                    className="w-6 h-6 flex items-center justify-center border border-gray-300 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer text-sm font-bold"
+                                                >
+                                                    −
+                                                </button>
+                                                <span className="text-sm text-gray-500">{item.quantity}</span>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleQuantityChange(item._id, item.quantity + 1)}
+                                                    className="w-6 h-6 flex items-center justify-center border border-gray-300 hover:bg-gray-100 cursor-pointer text-sm font-bold"
+                                                >
+                                                    +
+                                                </button>
+                                            </div>
+
+                                            <p className="text-sm font-bold text-slate-900 mt-1">${(item.price * item.quantity).toFixed(2)}</p>
                                         </div>
 
                                         {/* Remove Button */}
