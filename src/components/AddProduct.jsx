@@ -27,7 +27,7 @@ const AddProduct = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setLoading(true) // ✅ start loading
+        setLoading(true)
 
         const formData = new FormData();
         formData.append('title', product.title);
@@ -36,7 +36,7 @@ const AddProduct = () => {
         product.images.forEach((file) => formData.append('images', file));
 
         try {
-            const response = await axios.post('http://localhost:3000/api/v1/product/createproduct', formData,
+            const response = await axios.post('https://addtocartecom-backend.vercel.app/api/v1/product/createproduct', formData,
                 { headers: { 'Content-Type': 'multipart/form-data' } }
             );
             console.log("Success:", response.data);
@@ -45,7 +45,7 @@ const AddProduct = () => {
             console.error("Upload Error:", error.response?.data || error.message);
             messageApi.open({ type: 'error', content: 'Failed to upload product' });
         } finally {
-            setLoading(false) // ✅ stop loading
+            setLoading(false)
         }
     };
 

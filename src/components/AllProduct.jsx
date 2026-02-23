@@ -28,7 +28,7 @@ const AllProduct = () => {
         setDeletingId(id)
 
         try {
-            let response = await axios.delete(`http://localhost:3000/api/v1/product/deleteproduct/${id}`);
+            let response = await axios.delete(`https://addtocartecom-backend.vercel.app/api/v1/product/deleteproduct/${id}`);
             if (response.data.success) {
                 const updatedProducts = products.filter(item => item._id !== id);
                 setproducts(updatedProducts);

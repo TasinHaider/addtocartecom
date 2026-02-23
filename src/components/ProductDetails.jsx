@@ -18,7 +18,7 @@ const ProductDetails = () => {
     useEffect(() => {
         async function fetchProduct() {
             try {
-                const response = await axios.get(`http://localhost:3000/api/v1/product/${slug}`)
+                const response = await axios.get(`https://addtocartecom-backend.vercel.app/api/v1/product/${slug}`)
                 setProduct(response.data.data)
                 setMainImage(response.data.data.image?.[0])  // image not images
             } catch (error) {

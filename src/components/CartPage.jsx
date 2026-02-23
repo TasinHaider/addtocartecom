@@ -15,7 +15,7 @@ const CartPage = () => {
     useEffect(() => {
         async function fetchCart() {
             try {
-                const response = await axios.get('http://localhost:3000/api/v1/cart/allcart', {
+                const response = await axios.get('https://addtocartecom-backend.vercel.app/api/v1/cart/allcart', {
                     params: { user: userData.data._id }
                 })
                 setCartItems(response.data.data)
