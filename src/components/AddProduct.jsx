@@ -27,7 +27,7 @@ const AddProduct = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setLoading(true)
+        setLoading(true);
 
         const formData = new FormData();
         formData.append('title', product.title);
