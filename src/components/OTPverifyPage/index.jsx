@@ -71,6 +71,7 @@ const OTPverifyPage = () => {
                             <input
                                 name='email'
                                 onChange={handleChange}
+                                value={verifyData.email}
                                 type="text"
                                 placeholder="Enter Email"
                                 className="pr-4 pl-12 py-3 text-sm text-slate-900 rounded bg-white border border-gray-400 w-full outline-[#333]"
@@ -88,6 +89,7 @@ const OTPverifyPage = () => {
                             <input
                                 name='otp'
                                 onChange={handleChange}
+                                value={verifyData.otp}
                                 type="number"
                                 placeholder="Enter otp"
                                 className="pr-4 pl-12 py-3 text-sm text-slate-900 rounded bg-white border border-gray-400 w-full outline-[#333]"

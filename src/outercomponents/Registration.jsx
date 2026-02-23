@@ -67,6 +67,7 @@ const Registration = () => {
                                 <label className="text-slate-900 text-sm mb-2 block">Name</label>
                                 <input
                                     onChange={handleChange}
+                                    value={formData.name}
                                     name="name"
                                     type="text"
                                     className="bg-gray-100 w-full text-slate-900 text-sm px-4 py-3 focus:bg-transparent border border-gray-100 focus:border-black outline-none transition-all"
@@ -77,6 +78,7 @@ const Registration = () => {
                                 <label className="text-slate-900 text-sm mb-2 block">Email</label>
                                 <input
                                     onChange={handleChange}
+                                    value={formData.email}
                                     name="email"
                                     type="text"
                                     className="bg-gray-100 w-full text-slate-900 text-sm px-4 py-3 focus:bg-transparent border border-gray-100 focus:border-black outline-none transition-all"
@@ -87,6 +89,7 @@ const Registration = () => {
                                 <label className="text-slate-900 text-sm mb-2 block">Password</label>
                                 <input
                                     onChange={handleChange}
+                                    value={formData.password}
                                     name="password"
                                     type="password"
                                     className="bg-gray-100 w-full text-slate-900 text-sm px-4 py-3 focus:bg-transparent border border-gray-100 focus:border-black outline-none transition-all"
