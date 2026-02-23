@@ -1,7 +1,7 @@
 import axios from 'axios'
 import React, { useState } from 'react'
 import { Slide, toast, ToastContainer } from 'react-toastify';
-import { useNavigate } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 
 const Registration = () => {
 
@@ -29,6 +29,10 @@ const Registration = () => {
                     navigate('/otpverification')
                 }, 3000);
 
+            } else if (response.data.isUnverified) {
+                //Redirect to OTP page if account exists but not verified
+                toast.warning(response.data.message);
+                setTimeout(() => navigate('/otpverification'), 2000);
             }
         } catch (err) {
             const errorMsg = err.response?.data?.message || "Something went wrong";
@@ -101,12 +105,9 @@ const Registration = () => {
                         </div>
                         <p className="text-sm text-slate-600 mt-6">
                             Already have an account?{" "}
-                            <a
-                                href="/login"
-                                className="text-blue-600 font-semibold hover:underline ml-1"
-                            >
+                            <Link to="/login" className="text-blue-600 font-semibold hover:underline ml-1">
                                 Login here
-                            </a>
+                            </Link>
                         </p>
                     </form>
                     <div className="h-full">
