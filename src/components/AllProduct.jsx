@@ -20,9 +20,12 @@ const AllProduct = () => {
     }, [])
     console.log(products);
 
+
+    const [deletingId, setDeletingId] = useState(null)
     //delete product
     const handleDelete = async (e, id) => {
         e.stopPropagation()
+        setDeletingId(id)
 
         try {
             let response = await axios.delete(`http://localhost:3000/api/v1/product/deleteproduct/${id}`);
@@ -34,6 +37,8 @@ const AllProduct = () => {
         } catch (error) {
             console.error("Delete Error:", error.response?.data || error.message);
             messageApi.open({ type: 'error', content: 'Failed to delete product' });
+        } finally {
+            setDeletingId(null)
         }
     }
 
@@ -84,11 +89,11 @@ const AllProduct = () => {
                                 {/* Buttons pushed to bottom */}
                                 <div className="flex items-center gap-2 mt-auto pt-6">
                                     <div
-                                        onClick={(e) => handleDelete(e, item._id)}
+                                        onClick={(e) => deletingId ? null : handleDelete(e, item._id)}
                                         className="bg-pink-50 hover:bg-pink-100 text-pink-500 w-12 h-9 flex items-center justify-center rounded-lg cursor-pointer transition-colors"
                                         title="Delete Product"
                                     >
-                                        <RiDeleteBin6Fill />
+                                        {deletingId === item._id ? '...' : <RiDeleteBin6Fill />}
                                     </div>
                                     <button
                                         onClick={() => handleDetails(item)}

@@ -23,8 +23,11 @@ const AddProduct = () => {
         }
     };
 
+    const [loading, setLoading] = useState(false)
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true) // ✅ start loading
 
         const formData = new FormData();
         formData.append('title', product.title);
@@ -41,6 +44,8 @@ const AddProduct = () => {
         } catch (error) {
             console.error("Upload Error:", error.response?.data || error.message);
             messageApi.open({ type: 'error', content: 'Failed to upload product' });
+        } finally {
+            setLoading(false) // ✅ stop loading
         }
     };
 
@@ -123,7 +128,7 @@ const AddProduct = () => {
                             type="submit"
                             className="px-6 py-2 text-sm font-semibold bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition active:scale-95"
                         >
-                            Publish
+                            {loading ? 'Uploading...' : 'Publish'}
                         </button>
                     </div>
 
