@@ -23,7 +23,7 @@ const Login = () => {
         e.preventDefault();
 
         try {
-            const response = await axios.post('http://localhost:3000/api/v1/auth/login', {
+            const response = await axios.post('https://addtocartecom-backend.vercel.app/api/v1/auth/login', {
                 email: formData.email,
                 password: formData.password
             });

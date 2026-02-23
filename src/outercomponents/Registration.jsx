@@ -20,7 +20,7 @@ const Registration = () => {
     let handleSubmit = async (e) => {
         e.preventDefault()
         try {
-            const response = await axios.post('http://localhost:3000/api/v1/auth/signup', formData);
+            const response = await axios.post('https://addtocartecom-backend.vercel.app/api/v1/auth/signup', formData);
             if (response.data.success) {
                 toast.success(response.data.message);
                 setFormData({ name: "", email: "", password: "" });

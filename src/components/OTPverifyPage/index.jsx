@@ -23,7 +23,7 @@ const OTPverifyPage = () => {
         e.preventDefault();
 
         try {
-            const response = await axios.post('http://localhost:3000/api/v1/auth/verifyotp', {
+            const response = await axios.post('https://addtocartecom-backend.vercel.app/api/v1/auth/verifyotp', {
                 email: verifyData.email,
                 otp: verifyData.otp
             });
