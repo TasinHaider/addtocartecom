@@ -9,9 +9,14 @@ const OTPverifyPage = () => {
 
     let navigate = useNavigate()
     const { state } = useLocation()
+
+    // ✅ save to sessionStorage on arrival, fallback on refresh
+    const resolvedEmail = state?.email || sessionStorage.getItem('otp_email') || ''
+    if (state?.email) sessionStorage.setItem('otp_email', state.email)
+
     let [loading, setLoading] = useState(false)
     let [verifyData, setverifyData] = useState({
-        email: state?.email || '',
+        email: resolvedEmail, // ✅ fixed
         otp: ''
     })
     const handleChange = (e) => {
@@ -29,6 +34,7 @@ const OTPverifyPage = () => {
             });
             if (response.data.success) {
                 toast.success(response.data.message)
+                sessionStorage.removeItem('otp_email') // ✅ clear after success
                 setverifyData({ email: '', otp: '' })
                 setTimeout(() => navigate('/login'), 3000)
             }
@@ -70,7 +76,7 @@ const OTPverifyPage = () => {
                                 value={verifyData.email}
                                 type="text"
                                 placeholder="Enter Email"
-                                readOnly={!!state?.email}
+                                readOnly={!!resolvedEmail} // ✅ fixed
                                 disabled={loading}
                                 className="pr-4 pl-12 py-3 text-sm text-slate-900 rounded bg-white border border-gray-400 w-full outline-[#333] disabled:opacity-50"
                             />
