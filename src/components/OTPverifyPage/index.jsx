@@ -3,15 +3,14 @@ import { GoNumber } from "react-icons/go";
 import React, { useState } from 'react';
 import axios from 'axios';
 import { ToastContainer, toast, Slide } from 'react-toastify';
-import { useNavigate } from 'react-router';
-
+import { useNavigate, useLocation } from 'react-router';
 
 const OTPverifyPage = () => {
 
     let navigate = useNavigate()
-
+    const { state } = useLocation()
     let [verifyData, setverifyData] = useState({
-        email: '',
+        email: state?.email || '',
         otp: ''
     })
     const handleChange = (e) => {
@@ -31,7 +30,7 @@ const OTPverifyPage = () => {
             if (response.data.success) {
                 toast.success(response.data.message)
                 setverifyData({ email: '', otp: '' })
-                
+
                 setTimeout(() => {
                     navigate('/login')
                 }, 3000)
@@ -74,6 +73,7 @@ const OTPverifyPage = () => {
                                 value={verifyData.email}
                                 type="text"
                                 placeholder="Enter Email"
+                                readOnly={!!state?.email}
                                 className="pr-4 pl-12 py-3 text-sm text-slate-900 rounded bg-white border border-gray-400 w-full outline-[#333]"
                             />
                             <div className="absolute left-4">

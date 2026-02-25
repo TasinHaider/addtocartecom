@@ -6,6 +6,7 @@ import { Link, useNavigate } from 'react-router';
 const Registration = () => {
 
     let navigate = useNavigate()
+    let [loading, setLoading] = useState(false)
 
     let [formData, setFormData] = useState({
         name: "",
@@ -19,25 +20,23 @@ const Registration = () => {
     // form submit handler
     let handleSubmit = async (e) => {
         e.preventDefault()
+        setLoading(true)
         try {
             const response = await axios.post('https://addtocartecom-backend.vercel.app/api/v1/auth/signup', formData);
             if (response.data.success) {
                 toast.success(response.data.message);
+                const email = formData.email
                 setFormData({ name: "", email: "", password: "" });
-
-                setTimeout(() => {
-                    navigate('/otpverification')
-                }, 3000);
-
+                setTimeout(() => navigate('/otpverification', { state: { email } }), 3000);
             } else if (response.data.isUnverified) {
-                //Redirect to OTP page if account exists but not verified
                 toast.warning(response.data.message);
-                setTimeout(() => navigate('/otpverification'), 2000);
+                setTimeout(() => navigate('/otpverification', { state: { email: formData.email } }), 3000);
             }
         } catch (err) {
             const errorMsg = err.response?.data?.message || "Something went wrong";
             toast.error(errorMsg);
-            console.error(errorMsg);
+        } finally {
+            setLoading(false)
         }
     };
 
@@ -70,7 +69,8 @@ const Registration = () => {
                                     value={formData.name}
                                     name="name"
                                     type="text"
-                                    className="bg-gray-100 w-full text-slate-900 text-sm px-4 py-3 focus:bg-transparent border border-gray-100 focus:border-black outline-none transition-all"
+                                    disabled={loading}
+                                    className="bg-gray-100 w-full text-slate-900 text-sm px-4 py-3 focus:bg-transparent border border-gray-100 focus:border-black outline-none transition-all disabled:opacity-50"
                                     placeholder="Enter name"
                                 />
                             </div>
@@ -81,7 +81,8 @@ const Registration = () => {
                                     value={formData.email}
                                     name="email"
                                     type="text"
-                                    className="bg-gray-100 w-full text-slate-900 text-sm px-4 py-3 focus:bg-transparent border border-gray-100 focus:border-black outline-none transition-all"
+                                    disabled={loading}
+                                    className="bg-gray-100 w-full text-slate-900 text-sm px-4 py-3 focus:bg-transparent border border-gray-100 focus:border-black outline-none transition-all disabled:opacity-50"
                                     placeholder="Enter email"
                                 />
                             </div>
@@ -92,7 +93,8 @@ const Registration = () => {
                                     value={formData.password}
                                     name="password"
                                     type="password"
-                                    className="bg-gray-100 w-full text-slate-900 text-sm px-4 py-3 focus:bg-transparent border border-gray-100 focus:border-black outline-none transition-all"
+                                    disabled={loading}
+                                    className="bg-gray-100 w-full text-slate-900 text-sm px-4 py-3 focus:bg-transparent border border-gray-100 focus:border-black outline-none transition-all disabled:opacity-50"
                                     placeholder="Enter password"
                                 />
                             </div>
@@ -101,9 +103,18 @@ const Registration = () => {
                             <button
                                 onClick={handleSubmit}
                                 type="button"
-                                className="py-3 px-6 text-sm text-white tracking-wide bg-blue-600 hover:bg-blue-700 focus:outline-none cursor-pointer"
+                                disabled={loading}
+                                className="py-3 px-6 text-sm text-white tracking-wide bg-blue-600 hover:bg-blue-700 focus:outline-none cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2"
                             >
-                                Register
+                                {loading ? (
+                                    <>
+                                        <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                                        </svg>
+                                        Registering...
+                                    </>
+                                ) : 'Register'}
                             </button>
                         </div>
                         <p className="text-sm text-slate-600 mt-6">
@@ -122,7 +133,6 @@ const Registration = () => {
                     </div>
                 </div>
             </div>
-
         </section>
     )
 }
